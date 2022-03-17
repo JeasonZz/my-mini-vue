@@ -2,7 +2,7 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 10:39:34
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 11:29:07
+ * @LastEditTime: 2022-03-17 15:07:38
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\tests\reactivity.spec.ts
  */
@@ -21,5 +21,18 @@ describe("reactivity", () => {
     expect(observed.foo).toBe(1);
     expect(isReactive(observed)).toBe(true);
     expect(isReactive(original)).toBe(false);
+  });
+
+  test("nested reactives", () => {
+    const original = {
+      nested: {
+        foo: 1,
+      },
+      array: [{ bar: 2 }],
+    };
+    const observed = reactive(original);
+    expect(isReactive(observed.nested)).toBe(true);
+    expect(isReactive(observed.array)).toBe(true);
+    expect(isReactive(observed.array[0])).toBe(true);
   });
 });

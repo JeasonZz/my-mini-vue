@@ -2,7 +2,7 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 10:39:47
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 11:29:30
+ * @LastEditTime: 2022-03-17 14:35:42
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\tests\effect.spec.ts
  */
@@ -80,12 +80,14 @@ describe("effect test", () => {
 
     expect(dummy).toBe(2);
     stop(runner);
-    // num.init++;
-    num.init = 2;
+    num.init++;
+    num.init++;
+    num.init++;
+    // num.init = 2;
     // ++num.init;
     expect(dummy).toBe(2);
     runner();
-    expect(dummy).toBe(3);
+    expect(dummy).toBe(5);
   });
 
   it("onStop", () => {

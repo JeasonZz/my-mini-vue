@@ -2,21 +2,29 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-17 10:38:56
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 11:25:36
+ * @LastEditTime: 2022-03-17 15:15:17
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\baseHandler.ts
  */
 import { dep, trigger } from "./effect";
-
+import { ReactiveFlags, reactive, readonly } from "./reactivity";
+import { isObject } from "./shared/index";
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
 
-function createGetter(isReadOnly?: Boolean) {
+function createGetter(isReadOnly = false) {
   return function (target, property, receiver) {
-    let res = Reflect.get(target, property);
-    if (property === "__v_isReactive") {
+    if (property === ReactiveFlags.IS_REACTIVE) {
       return !isReadOnly;
+    } else if (property === ReactiveFlags.IS_READONLY) {
+      return isReadOnly;
+    }
+
+    let res = Reflect.get(target, property);
+
+    if (isObject(res)) {
+      return isReadOnly ? readonly(res) : reactive(res);
     }
     if (!isReadOnly) {
       //依赖收集
@@ -41,7 +49,7 @@ export const mutableHandlers = {
 };
 
 export const readonlyHandlers = {
-  readonlyGet,
+  get: readonlyGet,
   set(target, property, value) {
     console.warn(`${target}.${property} are not permited to set value`);
     return true;
