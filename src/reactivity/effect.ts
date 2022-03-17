@@ -2,7 +2,7 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 13:37:45
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 15:08:23
+ * @LastEditTime: 2022-03-17 16:57:03
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\effect.ts
  */
@@ -50,8 +50,7 @@ function cleanupEffect(effect) {
 }
 let mapContainer = new Map();
 export function dep(target, property) {
-  if (!fnContainer) return;
-  if (!isCollect) return;
+  if (!isTracking()) return;
   //收集思路 targe -> property -> fn
   let targetMap = mapContainer.get(target);
   if (!targetMap) {
@@ -63,19 +62,42 @@ export function dep(target, property) {
     depSet = new Set();
     targetMap.set(property, depSet);
   }
+  // if (depSet.has(fnContainer)) return;
+  // depSet.add(fnContainer);
+  // fnContainer.deps.push(depSet);
+  trackEffects(depSet);
+}
+
+export function trackEffects(depSet) {
   if (depSet.has(fnContainer)) return;
   depSet.add(fnContainer);
   fnContainer.deps.push(depSet);
 }
 
+//获得reactive的属性时是否继续收集effect函数
+export function isTracking() {
+  return isCollect && fnContainer !== undefined;
+}
+
 export function trigger(target, property) {
   let targetMap = mapContainer.get(target);
   let targetSet = targetMap.get(property);
-  for (const reactivityEffect of targetSet) {
-    if (reactivityEffect._schedule) {
-      reactivityEffect._schedule();
+  // for (const reactivityEffect of targetSet) {
+  //   if (reactivityEffect._schedule) {
+  //     reactivityEffect._schedule();
+  //   } else {
+  //     reactivityEffect.run();
+  //   }
+  // }
+  triggerEffects(targetSet);
+}
+
+export function triggerEffects(dep) {
+  for (const effect of dep) {
+    if (effect._schedule) {
+      effect._schedule();
     } else {
-      reactivityEffect.run();
+      effect.run();
     }
   }
 }
