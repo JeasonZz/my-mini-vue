@@ -2,18 +2,18 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-17 10:38:56
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 15:15:17
+ * @LastEditTime: 2022-03-17 15:46:26
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\baseHandler.ts
  */
 import { dep, trigger } from "./effect";
 import { ReactiveFlags, reactive, readonly } from "./reactivity";
-import { isObject } from "./shared/index";
+import { isObject, extend } from "./shared/index";
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
-
-function createGetter(isReadOnly = false) {
+const shallowReadonly = createGetter(true, true);
+function createGetter(isReadOnly = false, isShallow = false) {
   return function (target, property, receiver) {
     if (property === ReactiveFlags.IS_REACTIVE) {
       return !isReadOnly;
@@ -22,7 +22,9 @@ function createGetter(isReadOnly = false) {
     }
 
     let res = Reflect.get(target, property);
-
+    if (isShallow) {
+      return res;
+    }
     if (isObject(res)) {
       return isReadOnly ? readonly(res) : reactive(res);
     }
@@ -55,3 +57,7 @@ export const readonlyHandlers = {
     return true;
   },
 };
+
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+  get: shallowReadonly,
+});

@@ -2,11 +2,15 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 10:38:51
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 11:38:58
+ * @LastEditTime: 2022-03-17 15:49:29
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\reactivity.ts
  */
-import { mutableHandlers, readonlyHandlers } from "./baseHandler";
+import {
+  mutableHandlers,
+  readonlyHandlers,
+  shallowReadonlyHandlers,
+} from "./baseHandler";
 
 export const enum ReactiveFlags {
   IS_REACTIVE = "__v_isReactive",
@@ -19,6 +23,10 @@ export function reactive(target) {
 
 export function readonly(target) {
   return createReactiveObject(target, readonlyHandlers);
+}
+
+export function shallowReadonly(target) {
+  return createReactiveObject(target, shallowReadonlyHandlers);
 }
 
 export function isReactive(value) {
