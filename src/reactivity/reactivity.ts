@@ -2,13 +2,13 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 10:38:51
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-16 14:30:25
+ * @LastEditTime: 2022-03-17 10:32:31
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity.ts
  */
 import { dep, trigger } from "./effect";
 export function reactivity(target) {
-  const reactiveTarget = new Proxy(target, {
+  return new Proxy(target, {
     get(target, property, receiver) {
       let res = Reflect.get(target, property);
       //依赖收集
@@ -22,5 +22,17 @@ export function reactivity(target) {
       return res;
     },
   });
-  return reactiveTarget;
+}
+
+export function readonly(target) {
+  return new Proxy(target, {
+    get(targe, property, receiver) {
+      let res = Reflect.get(targe, property);
+      return res;
+    },
+    set(target, property, value) {
+      console.warn(`${target}.${property} are not permited to set value`);
+      return true;
+    },
+  });
 }

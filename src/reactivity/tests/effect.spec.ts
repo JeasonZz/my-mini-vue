@@ -2,7 +2,7 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 10:39:47
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-16 17:44:18
+ * @LastEditTime: 2022-03-17 09:57:27
  * @Description: file content
  * @FilePath: \my-mini-vue\src\tests\effect.spec.ts
  */
@@ -67,17 +67,43 @@ describe("effect test", () => {
   });
   it("stop", () => {
     let dummy;
+    let dummy2;
     let num = reactivity({
       init: 1,
     });
     const runner = effect(() => {
       dummy = num.init + 1;
     });
+    // const runner2 = effect(() => {
+    //   dummy2 = num.init + 2;
+    // });
+
     expect(dummy).toBe(2);
     stop(runner);
-    num.init++;
+    // num.init++;
+    num.init = 2;
+    // ++num.init;
     expect(dummy).toBe(2);
     runner();
     expect(dummy).toBe(3);
+  });
+
+  it("onStop", () => {
+    const obj = reactivity({
+      foo: 1,
+    });
+    const onStop = jest.fn();
+    let dummy;
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      {
+        onStop,
+      }
+    );
+
+    stop(runner);
+    expect(onStop).toBeCalledTimes(1);
   });
 });
