@@ -2,12 +2,12 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 10:39:47
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 09:57:27
+ * @LastEditTime: 2022-03-17 11:29:30
  * @Description: file content
- * @FilePath: \my-mini-vue\src\tests\effect.spec.ts
+ * @FilePath: \my-mini-vue\src\reactivity\tests\effect.spec.ts
  */
 import sum from "../index";
-import { reactivity } from "../reactivity";
+import { reactive } from "../reactivity";
 import { effect, stop } from "../effect";
 
 test("happy path", () => {
@@ -16,7 +16,7 @@ test("happy path", () => {
 
 describe("effect test", () => {
   it("effect", () => {
-    let person = reactivity({
+    let person = reactive({
       age: 5,
     });
     let ageContainer;
@@ -43,7 +43,7 @@ describe("effect test", () => {
   it("schedule", () => {
     let brotherAge;
     let r;
-    let person1 = reactivity({
+    let person1 = reactive({
       age: 20,
     });
     const schedule = jest.fn(() => {
@@ -68,7 +68,7 @@ describe("effect test", () => {
   it("stop", () => {
     let dummy;
     let dummy2;
-    let num = reactivity({
+    let num = reactive({
       init: 1,
     });
     const runner = effect(() => {
@@ -89,7 +89,7 @@ describe("effect test", () => {
   });
 
   it("onStop", () => {
-    const obj = reactivity({
+    const obj = reactive({
       foo: 1,
     });
     const onStop = jest.fn();
