@@ -2,12 +2,12 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-17 16:37:31
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 17:15:20
+ * @LastEditTime: 2022-03-18 15:50:46
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\tests\ref.spec.ts
  */
 import { effect } from "../effect";
-import { ref } from "../ref";
+import { ref, isRef, unRef } from "../ref";
 describe("ref", () => {
   it("happy path", () => {
     const a = ref(1);
@@ -33,7 +33,7 @@ describe("ref", () => {
     expect(dummy).toBe(2);
   });
 
-  it("should make nested properties reactive", () => {
+  it("shoul make nested properties reactive", () => {
     const a = ref({
       count: 1,
     });
@@ -44,5 +44,14 @@ describe("ref", () => {
     expect(dummy).toBe(1);
     a.value.count = 2;
     expect(dummy).toBe(2);
+  });
+
+  it("isRef and unRef", () => {
+    let num = ref(18);
+    let num2 = 20;
+    expect(isRef(num)).toBe(true);
+    expect(isRef(num2)).toBe(false);
+    expect(unRef(num)).toBe(18);
+    expect(unRef(num2)).toBe(20);
   });
 });
