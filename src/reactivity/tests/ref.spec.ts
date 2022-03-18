@@ -2,12 +2,12 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-17 16:37:31
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-18 15:50:46
+ * @LastEditTime: 2022-03-18 16:17:39
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\tests\ref.spec.ts
  */
 import { effect } from "../effect";
-import { ref, isRef, unRef } from "../ref";
+import { ref, isRef, unRef, proxyRefs } from "../ref";
 describe("ref", () => {
   it("happy path", () => {
     const a = ref(1);
@@ -53,5 +53,23 @@ describe("ref", () => {
     expect(isRef(num2)).toBe(false);
     expect(unRef(num)).toBe(18);
     expect(unRef(num2)).toBe(20);
+  });
+
+  it("proxyRefs", () => {
+    let obj = {
+      age: ref(18),
+      name: "zhangjiasong",
+    };
+    let proxyRefs_ = proxyRefs(obj);
+
+    expect(obj.age.value).toBe(18);
+    expect(proxyRefs_.age).toBe(18);
+    expect(proxyRefs_.name).toBe("zhangjiasong");
+
+    proxyRefs_.age = 22;
+    expect(proxyRefs_.age).toBe(22);
+    expect(proxyRefs_.name).toBe("zhangjiasong");
+    proxyRefs_.age = ref(33);
+    expect(proxyRefs_.age).toBe(33);
   });
 });
