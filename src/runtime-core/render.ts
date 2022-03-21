@@ -2,7 +2,7 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-21 15:05:36
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-21 15:22:54
+ * @LastEditTime: 2022-03-21 16:40:03
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\render.ts
  */
@@ -27,6 +27,6 @@ function mountComponent(vnode, container) {
 }
 
 function setupRenderEffect(instance, container) {
-  const subTree = instance.type;
+  const subTree = instance.render();
   patch(subTree, container);
 }

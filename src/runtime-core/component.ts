@@ -2,7 +2,7 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-21 15:05:59
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-21 15:22:15
+ * @LastEditTime: 2022-03-21 16:25:31
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\component.ts
  */
@@ -46,7 +46,5 @@ function handleSetupResult(instance, setupResult: any) {
 function finishComponentSetup(instance: any) {
   const Component = instance.type;
 
-  if (!Component.render) {
-    instance.render = Component.render;
-  }
+  instance.render = Component.render;
 }
