@@ -2,11 +2,11 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-16 13:37:45
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-21 11:29:09
+ * @LastEditTime: 2022-03-21 14:16:03
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\effect.ts
  */
-import { extend } from "./shared/index";
+import { extend } from "../shared/index";
 
 let fnContainer;
 let isCollect;

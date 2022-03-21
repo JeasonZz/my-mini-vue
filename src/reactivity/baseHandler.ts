@@ -2,13 +2,13 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-17 10:38:56
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-17 15:46:26
+ * @LastEditTime: 2022-03-21 14:16:07
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\baseHandler.ts
  */
 import { dep, trigger } from "./effect";
 import { ReactiveFlags, reactive, readonly } from "./reactivity";
-import { isObject, extend } from "./shared/index";
+import { isObject, extend } from "../shared/index";
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
