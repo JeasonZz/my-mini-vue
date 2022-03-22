@@ -23,7 +23,17 @@ export default {
           console.log("downdown");
         },
       },
-      [h(Foo, { count: 1 })]
+      [
+        h(Foo, {
+          count: 1,
+          // onAdd(arg) {
+          //   console.log("Add", arg);
+          // },
+          // onAddCount(num) {
+          //   console.log("onAddCount", num);
+          // },
+        }),
+      ]
       // "Hi, " + this.msg
       // [
       //   h(
