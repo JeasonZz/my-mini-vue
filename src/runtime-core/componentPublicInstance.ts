@@ -6,15 +6,18 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\componentPublicInstance.ts
  */
+import { hasOwn } from "../shared/index";
 const publicPropertiesMap = {
   $el: (i) => i.vnode.el,
 };
 
 export const PublicInstanceProxyHandlers = {
   get({ _: instance }, key) {
-    const { setupState } = instance;
-    if (key in setupState) {
+    const { setupState, props } = instance;
+    if (hasOwn(setupState, key)) {
       return setupState[key];
+    } else if (hasOwn(props, key)) {
+      return props[key];
     }
     if (key in publicPropertiesMap) {
       return publicPropertiesMap[key](instance);

@@ -7,6 +7,7 @@
  * @FilePath: \my-mini-vue\example\helloworld\App.js
  */
 import { h } from "../../lib/guide-mini-vue.esm.js";
+import Foo from "./Foo.js";
 export default {
   render() {
     window.self = this;
@@ -22,7 +23,8 @@ export default {
           console.log("downdown");
         },
       },
-      "Hi, " + this.msg
+      [h(Foo, { count: 1 })]
+      // "Hi, " + this.msg
       // [
       //   h(
       //     "p",
