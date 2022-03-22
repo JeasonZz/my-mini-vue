@@ -6,6 +6,7 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\render.ts
  */
+import { shapeFlags } from "../shared/shapeFlags";
 import { isObject } from "../shared/index";
 import { createComponentInstance, setupComponent } from "./component";
 
@@ -14,9 +15,9 @@ export function render(vnode, container) {
 }
 
 function patch(vnode, container) {
-  if (typeof vnode.type == "string") {
+  if (vnode.shapeFlag & shapeFlags.ELEMENT) {
     processElement(vnode, container);
-  } else if (isObject(vnode)) {
+  } else if (vnode.shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
     processComponent(vnode, container);
   }
 }
@@ -27,14 +28,20 @@ function processElement(vnode, container) {
 
 function mountElement(vnode, container) {
   const el = (vnode.el = document.createElement(vnode.type));
-  let { children, props } = vnode;
-  if (typeof children === "string") {
+  let { children, props, shapeFlag } = vnode;
+  if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
     el.textContent = children;
-  } else if (Array.isArray(children)) {
+  } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
     mountChildren(vnode, el);
   }
   for (const key in props) {
     let value = props[key];
+
+    const isOn = (key) => /^on[A-Z]/.test(key);
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase();
+      el.addEventListener(event, value);
+    }
     el.setAttribute(key, value);
   }
   container.append(el);

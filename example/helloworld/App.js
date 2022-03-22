@@ -15,6 +15,12 @@ export default {
       {
         id: "root",
         class: ["red", "hard"],
+        onClick: () => {
+          console.log("click");
+        },
+        onMousedown: () => {
+          console.log("downdown");
+        },
       },
       "Hi, " + this.msg
       // [
