@@ -2,12 +2,13 @@
  * @Author: ZhangJiaSong
  * @Date: 2022-03-21 15:05:36
  * @LastEditors: ZhangJiaSong
- * @LastEditTime: 2022-03-21 17:59:27
+ * @LastEditTime: 2022-03-22 10:29:07
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\render.ts
  */
 import { isObject } from "../shared/index";
 import { createComponentInstance, setupComponent } from "./component";
+
 export function render(vnode, container) {
   return patch(vnode, container);
 }
@@ -19,11 +20,13 @@ function patch(vnode, container) {
     processComponent(vnode, container);
   }
 }
+
 function processElement(vnode, container) {
   mountElement(vnode, container);
 }
+
 function mountElement(vnode, container) {
-  const el = document.createElement(vnode.type);
+  const el = (vnode.el = document.createElement(vnode.type));
   let { children, props } = vnode;
   if (typeof children === "string") {
     el.textContent = children;
@@ -42,18 +45,21 @@ function mountChildren(vnode, container) {
     patch(v, container);
   });
 }
+
 function processComponent(vnode, container) {
   mountComponent(vnode, container);
 }
 
-function mountComponent(vnode, container) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initialVNode, container) {
+  const instance = createComponentInstance(initialVNode);
 
   setupComponent(instance);
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
 
-function setupRenderEffect(instance, container) {
-  const subTree = instance.render();
+function setupRenderEffect(instance, initialVNode, container) {
+  const { proxy } = instance;
+  const subTree = instance.render.call(proxy);
   patch(subTree, container);
+  initialVNode.el = subTree.el;
 }
