@@ -1,6 +1,12 @@
-import { h, renderSlots } from "../../lib/guide-mini-vue.esm.js";
+import {
+  h,
+  renderSlots,
+  getCurrentInsrance,
+} from "../../lib/guide-mini-vue.esm.js";
 export default {
-  setup(props, { emit }) {},
+  setup(props, { emit }) {
+    console.log(getCurrentInsrance());
+  },
   render() {
     const btn = h("p", {}, "iiiiiiiiiii");
     const arr = [

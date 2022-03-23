@@ -6,7 +6,11 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\example\helloworld\App.js
  */
-import { h, createTextNode } from "../../lib/guide-mini-vue.esm.js";
+import {
+  h,
+  createTextNode,
+  getCurrentInsrance,
+} from "../../lib/guide-mini-vue.esm.js";
 import Foo from "./Foo.js";
 export default {
   render() {
@@ -36,6 +40,7 @@ export default {
     );
   },
   setup() {
+    console.log(getCurrentInsrance());
     return {
       msg: "mini-vue111",
     };
