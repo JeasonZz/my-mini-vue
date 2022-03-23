@@ -6,7 +6,7 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\example\helloworld\App.js
  */
-import { h } from "../../lib/guide-mini-vue.esm.js";
+import { h, createTextNode } from "../../lib/guide-mini-vue.esm.js";
 import Foo from "./Foo.js";
 export default {
   render() {
@@ -16,7 +16,10 @@ export default {
       {},
       {
         header: (age) => {
-          return h("div", {}, "header age=" + age);
+          return [
+            h("div", {}, "header age=" + age),
+            createTextNode("啊实打实大所"),
+          ];
         },
         footer: (age) => {
           return h("div", {}, "footer age=" + age);

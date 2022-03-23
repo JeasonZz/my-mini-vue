@@ -9,17 +9,38 @@
 import { shapeFlags } from "../shared/shapeFlags";
 import { isObject } from "../shared/index";
 import { createComponentInstance, setupComponent } from "./component";
-
+import { Fragment, Text } from "./vnode";
 export function render(vnode, container) {
   return patch(vnode, container);
 }
 
 function patch(vnode, container) {
-  if (vnode.shapeFlag & shapeFlags.ELEMENT) {
-    processElement(vnode, container);
-  } else if (vnode.shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container);
+  const { type, shapeFlag } = vnode;
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+    case Text:
+      processText(vnode, container);
+      break;
+    default:
+      if (shapeFlag & shapeFlags.ELEMENT) {
+        processElement(vnode, container);
+      } else if (shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container);
+      }
+      break;
   }
+}
+
+function processText(vnode, container) {
+  const { children } = vnode;
+  const textNode = (vnode.el = document.createTextNode(children));
+  container.append(textNode);
+}
+
+function processFragment(vnode, container) {
+  mountChildren(vnode, container);
 }
 
 function processElement(vnode, container) {

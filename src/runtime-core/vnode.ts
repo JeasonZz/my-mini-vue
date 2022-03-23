@@ -7,6 +7,9 @@
  * @FilePath: \my-mini-vue\src\runtime-core\vnode.ts
  */
 import { shapeFlags } from "../shared/shapeFlags";
+
+export const Fragment = Symbol("Fragment");
+export const Text = Symbol("Text");
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,
@@ -27,6 +30,9 @@ export function createVNode(type, props?, children?) {
     }
   }
   return vnode;
+}
+export function createTextNode(text: string) {
+  return createVNode(Text, {}, text);
 }
 
 function getShapeFlags(type) {
