@@ -6,14 +6,16 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\createApp.ts
  */
-import { render } from "./render";
+// import { render } from "./render";
 import { createVNode } from "./vnode";
-export function createApp(rootComponent) {
-  return {
-    mount(rootContainer) {
-      const vnode = createVNode(rootComponent);
+export function createAppAPI(render) {
+  return function createApp(rootComponent) {
+    return {
+      mount(rootContainer) {
+        const vnode = createVNode(rootComponent);
 
-      render(vnode, rootContainer);
-    },
+        render(vnode, rootContainer);
+      },
+    };
   };
 }

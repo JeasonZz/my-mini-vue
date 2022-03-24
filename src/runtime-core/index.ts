@@ -6,9 +6,10 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\runtime-core\index.ts
  */
-export { createApp } from "./createApp";
+// export { createApp } from "./createApp";
 export { h } from "./h";
 export { renderSlots } from "./helpers/renderSlots";
 export { createTextNode } from "./vnode";
 export { getCurrentInsrance } from "./component";
 export { inject, provide } from "./apiInject";
+export { createRenderer } from "./render";

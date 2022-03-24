@@ -6,4 +6,4 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\index.ts
  */
-export * from "./runtime-core";
+export * from "./runtime-dom";
