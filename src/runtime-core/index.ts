@@ -11,3 +11,4 @@ export { h } from "./h";
 export { renderSlots } from "./helpers/renderSlots";
 export { createTextNode } from "./vnode";
 export { getCurrentInsrance } from "./component";
+export { inject, provide } from "./apiInject";
