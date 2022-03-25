@@ -14,7 +14,7 @@ export default {
       "div",
       {
         id: "root",
-        class: ["red", "hard"],
+        ...this.myProps,
         // onClick: () => {
         //   console.log("click");
         // },
@@ -25,6 +25,9 @@ export default {
       [
         h("p", {}, "count: " + this.count),
         h("button", { onClick: this.clickEvent }, "add"),
+        h("button", { onClick: this.onChangePropsDemo1 }, "changePropsValue"),
+        h("button", { onClick: this.onChangePropsDemo2 }, "deletePropsValue"),
+        h("button", { onClick: this.onChangePropsDemo3 }, "changePropsObject"),
       ]
     );
   },
@@ -33,9 +36,30 @@ export default {
     const clickEvent = () => {
       count.value++;
     };
+
+    const myProps = ref({
+      foo: "foo",
+      bar: "bar",
+    });
+
+    const onChangePropsDemo1 = () => {
+      myProps.value.foo = "new-foo";
+    };
+    const onChangePropsDemo2 = () => {
+      myProps.value.bar = undefined;
+    };
+    const onChangePropsDemo3 = () => {
+      myProps.value = {
+        foo: "foo",
+      };
+    };
     return {
       count,
+      myProps,
       clickEvent,
+      onChangePropsDemo1,
+      onChangePropsDemo2,
+      onChangePropsDemo3,
     };
   },
 };

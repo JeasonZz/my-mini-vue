@@ -23,7 +23,7 @@ export function createComponentInstance(vnode, parentComponent) {
     provides: parentComponent ? parentComponent.provides : {}, //初始化provides
     parent: parentComponent, //父组件实例
     isMounted: false, //flag of isMounted
-    prevSubTree: {}, //子组件的vdom树
+    subTree: {}, //组件的render函数返回的vnode树
   };
   component.emit = emit.bind(null, component) as any;
   return component;
