@@ -7,3 +7,4 @@
  * @FilePath: \my-mini-vue\src\index.ts
  */
 export * from "./runtime-dom";
+export * from "./reactivity";

@@ -6,13 +6,12 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\tests\effect.spec.ts
  */
-import sum from "../index";
 import { reactive } from "../reactivity";
 import { effect, stop } from "../effect";
 
-test("happy path", () => {
-  expect(sum(2, 2)).toBe(4);
-});
+// test("happy path", () => {
+//   expect(sum(2, 2)).toBe(4);
+// });
 
 describe("effect test", () => {
   it("effect", () => {

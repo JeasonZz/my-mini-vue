@@ -11,16 +11,19 @@ import { initProps } from "./componentProps";
 import { initSlots } from "./componentSlots";
 import { shallowReadonly } from "../reactivity/reactivity";
 import { emit } from "./componentEmit";
+import { proxyRefs } from "../reactivity/ref";
 export function createComponentInstance(vnode, parentComponent) {
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
     props: {},
-    emit: () => {},
-    slots: [],
-    provides: parentComponent ? parentComponent.provides : {},
-    parent: parentComponent,
+    emit: () => {}, //emit
+    slots: [], //插槽
+    provides: parentComponent ? parentComponent.provides : {}, //初始化provides
+    parent: parentComponent, //父组件实例
+    isMounted: false, //flag of isMounted
+    prevSubTree: {}, //子组件的vdom树
   };
   component.emit = emit.bind(null, component) as any;
   return component;
@@ -54,7 +57,7 @@ function handleSetupResult(instance, setupResult: any) {
   // function Object
   // TODO function
   if (typeof setupResult === "object") {
-    instance.setupState = setupResult;
+    instance.setupState = proxyRefs(setupResult);
   }
 
   finishComponentSetup(instance);

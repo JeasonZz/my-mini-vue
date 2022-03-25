@@ -6,6 +6,4 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\index.ts
  */
-export default function sum(a, b) {
-  return a + b;
-}
+export { ref } from "./ref";
