@@ -41,7 +41,7 @@ export class ReactivityEffect {
     }
   }
 }
-
+//把实例内收集的effct实例 定向清理
 function cleanupEffect(effect) {
   effect.deps.forEach((dep) => {
     dep.delete(effect);
@@ -70,6 +70,8 @@ export function dep(target, property) {
 
 export function trackEffects(depSet) {
   if (depSet.has(fnContainer)) return;
+  //每个effect执行都会生成一个实例，全局的set数组收集对应data每个属性的effect实例，
+  //每个effect实例同时也收集内部函数涉及data的数集，并且都是引用类型，会同时清理
   depSet.add(fnContainer);
   fnContainer.deps.push(depSet);
 }

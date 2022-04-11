@@ -12,11 +12,14 @@ import { createComponentInstance, setupComponent } from "./component";
 import { Fragment, Text } from "./vnode";
 import { createAppAPI } from "./createApp";
 import { effect } from "../reactivity/effect";
+//实现定制化渲染引擎
 export function createRenderer(options) {
   const {
     createElement: hostCreateElement,
     patchProp: hostPatchProp,
     insert: hostInsert,
+    remove: hostRemove,
+    setElementText: hostSetElementText,
   } = options;
   function render(vnode, container) {
     return patch(null, vnode, container, null);
@@ -48,25 +51,55 @@ export function createRenderer(options) {
   }
 
   function processFragment(n1, n2, container, parentComponent) {
-    mountChildren(n2, container, parentComponent);
+    mountChildren(n2.children, container, parentComponent);
   }
 
   function processElement(n1, n2, container, parentComponent) {
     if (!n1) {
       mountElement(n2, container, parentComponent);
     } else {
-      patchElement(n1, n2, container);
+      patchElement(n1, n2, container, parentComponent);
     }
   }
-  function patchElement(n1, n2, container) {
+
+  function patchElement(n1, n2, container, parentComponent) {
     console.log("patchElement");
     console.log("n1", n1);
-    console.log("n1", n2);
+    console.log("n2", n2);
     const el = (n2.el = n1.el);
     let oldProps = n1.props || EMPTY_OBJ;
     let newProps = n2.props || EMPTY_OBJ;
 
+    patchChildren(n1, n2, el, parentComponent);
     patchProps(el, oldProps, newProps);
+  }
+
+  function patchChildren(n1, n2, container, parentComponent) {
+    const prevShapeFlag = n1.shapeFlag;
+    const c1 = n1.children;
+    const { shapeFlag } = n2;
+    const c2 = n2.children;
+
+    if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
+      if (prevShapeFlag & shapeFlags.ARRAY_CHILDREN) {
+        unmountChildren(n1.children);
+      }
+      if (c1 !== c2) {
+        hostSetElementText(container, c2);
+      }
+    } else {
+      if (prevShapeFlag & shapeFlags.TEXT_CHILDREN) {
+        hostSetElementText(container, "");
+        mountChildren(c2, container, parentComponent);
+      }
+    }
+  }
+
+  function unmountChildren(children) {
+    children.forEach((item) => {
+      const el = item.el;
+      hostRemove(el);
+    });
   }
 
   function patchProps(el, oldProps, newProps) {
@@ -95,7 +128,7 @@ export function createRenderer(options) {
     if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
       el.textContent = children;
     } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
-      mountChildren(vnode, el, parentComponent);
+      mountChildren(vnode.children, el, parentComponent);
     }
 
     for (const key in props) {
@@ -105,8 +138,8 @@ export function createRenderer(options) {
     hostInsert(el, container);
   }
   //对vnode的children数组循环处理
-  function mountChildren(vnode, container, parentComponent) {
-    vnode.children.forEach((v) => {
+  function mountChildren(children, container, parentComponent) {
+    children.forEach((v) => {
       patch(null, v, container, parentComponent);
     });
   }
@@ -129,6 +162,7 @@ export function createRenderer(options) {
         console.log("init");
         //这里先把组件render返回的vnode树存到instance对象中，用于后面对比
         const { proxy } = instance;
+        //render函数中有this.  ref会对其进行依赖收集，this.改变则触发effect。
         const subTree = (instance.subTree = instance.render.call(proxy));
         patch(null, subTree, container, instance);
         //组件vnode对象上添加el属性，代表该组件最上层元素
