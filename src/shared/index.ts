@@ -8,6 +8,7 @@
  */
 
 export const extend = Object.assign;
+//判断是不是为引用类型  object or array
 export const isObject = (value) => {
   return value !== null && typeof value === "object";
 };

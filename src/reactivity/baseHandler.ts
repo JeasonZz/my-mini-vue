@@ -6,13 +6,18 @@
  * @Description: file content
  * @FilePath: \my-mini-vue\src\reactivity\baseHandler.ts
  */
+//引入effect的监听和触发操作
 import { dep, trigger } from "./effect";
+//引入响应式对象类型标志位、reactive和readonly用于循环处理子对象，
 import { ReactiveFlags, reactive, readonly } from "./reactivity";
+//工具函数引入
 import { isObject, extend } from "../shared/index";
+
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
 const shallowReadonly = createGetter(true, true);
+//this is a Factory to create proxy's getterHandler
 function createGetter(isReadOnly = false, isShallow = false) {
   return function (target, property, receiver) {
     if (property === ReactiveFlags.IS_REACTIVE) {
@@ -22,12 +27,15 @@ function createGetter(isReadOnly = false, isShallow = false) {
     }
 
     let res = Reflect.get(target, property);
+    //shallow 只监听一层，不深入监听
     if (isShallow) {
       return res;
     }
+    //深入监听 子引用类型
     if (isObject(res)) {
       return isReadOnly ? readonly(res) : reactive(res);
     }
+    //不是只读类型，要进行依赖收集
     if (!isReadOnly) {
       //依赖收集
       dep(target, property);
@@ -35,7 +43,7 @@ function createGetter(isReadOnly = false, isShallow = false) {
     return res;
   };
 }
-
+//this is a Factory to create proxy's setter
 function createSetter() {
   return function (target, property, value) {
     let res = Reflect.set(target, property, value);
