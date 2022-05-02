@@ -10,6 +10,7 @@ export function initSlots(instance, children) {
 function normalizeObjectSlots(children, slots) {
   for (const key in children) {
     const value = children[key];
+    //这里包装一层函数，让实例上的slots是一个函数
     slots[key] = (props) => normalizeSlotValue(value(props));
   }
 }

@@ -13,6 +13,7 @@ const publicPropertiesMap = {
 };
 
 export const PublicInstanceProxyHandlers = {
+  //是因为在这里解构了，this.xxx会调用get函数，可以在此解构以取_属性对象的值
   get({ _: instance }, key) {
     const { setupState, props } = instance;
     if (hasOwn(setupState, key)) {

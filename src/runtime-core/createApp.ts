@@ -8,10 +8,12 @@
  */
 // import { render } from "./render";
 import { createVNode } from "./vnode";
+//链式调用
 export function createAppAPI(render) {
   return function createApp(rootComponent) {
     return {
       mount(rootContainer) {
+        //入口去创建根组件的虚拟节点
         const vnode = createVNode(rootComponent);
 
         render(vnode, rootContainer);

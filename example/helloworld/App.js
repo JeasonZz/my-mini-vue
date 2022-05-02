@@ -11,6 +11,7 @@ import Foo from "./Foo.js";
 export default {
   render() {
     window.self = this;
+    console.log(this.msg);
     return h(
       "div",
       {
@@ -23,34 +24,34 @@ export default {
           console.log("downdown");
         },
       },
-      [
-        h(Foo, {
-          count: 1,
-          // onAdd(arg) {
-          //   console.log("Add", arg);
-          // },
-          // onAddCount(num) {
-          //   console.log("onAddCount", num);
-          // },
-        }),
-      ]
-      // "Hi, " + this.msg
       // [
-      //   h(
-      //     "p",
-      //     {
-      //       class: "red",
-      //     },
-      //     "Hi"
-      //   ),
-      //   h(
-      //     "p",
-      //     {
-      //       class: "blue",
-      //     },
-      //     "mini-vue"
-      //   ),
+      //   h(Foo, {
+      //     count: 1,
+      //     // onAdd(arg) {
+      //     //   console.log("Add", arg);
+      //     // },
+      //     // onAddCount(num) {
+      //     //   console.log("onAddCount", num);
+      //     // },
+      //   }),
       // ]
+        "Hi, " + this.msg
+        // [
+        //   h(
+        //     "p",
+        //     {
+        //       class: "red",
+        //     },
+        //     "Hi"
+        //   ),
+        //   h(
+        //     "p",
+        //     {
+        //       class: "blue",
+        //     },
+        //     "mini-vue"
+        //   ),
+        // ]
     );
   },
   setup() {

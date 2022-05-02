@@ -7,7 +7,9 @@
  * @FilePath: \my-mini-vue\src\runtime-core\index.ts
  */
 // export { createApp } from "./createApp";
+//h:将传进来的对象转化为vnode
 export { h } from "./h";
+//导出renderSlots
 export { renderSlots } from "./helpers/renderSlots";
 export { createTextNode } from "./vnode";
 export { getCurrentInsrance } from "./component";
