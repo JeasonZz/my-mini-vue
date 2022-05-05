@@ -222,7 +222,9 @@ export function createRenderer(options) {
           }
           //旧节点在新新节点数组中位置 为什么要+1？i+1没用，只是个标识
           newIndexToOldIndexMap[newIndex - s2] = i + 1;
-          //对该虚拟节点内不进行patch处理，顺利进入下一层
+          //对该虚拟节点内进行patch处理，顺利进入下一层，
+          //注意此时该节点顺序对否还未知，只是知道要复用该节点，此时去处理该节点的子节点。
+          //所以中间对比部分的el就是在这里复用原来的el的
           patch(prevChild, c2[newIndex], container, parentComponent, null);
           //pathed用于计算找到重复节点的数量，如果超出新节点长度，剩下的直接删除
           patched++;
@@ -235,6 +237,8 @@ export function createRenderer(options) {
         : [];
       //从尾部开始处理
       let j = increasingNewIndexSequence.length;
+      //这里有个点，最长递增子序列的长度必然小于newIndexToOldIndexMap
+      //所以
       for (let i = toBePatched - 1; i >= 0; i--) {
         const nextIndex = i + s2; //末尾元素的index
         const nextChild = c2[nextIndex];
