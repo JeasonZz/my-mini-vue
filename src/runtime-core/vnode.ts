@@ -22,7 +22,8 @@ export function createVNode(type, props?, children?) {
     props, //是个对象  里面包含各种类标签或者dom的属性
     children, //该标签的子类或者 子标签 是个数组或者 text 等等
     key: props && props.key, //虚拟节点的key 一般赋值props中的key
-    el: null,//最上层的el元素
+    el: null, //组件最上层的el元素 或者是虚拟节点对应的的真实dom
+    component: null, //该组件当前实例
     shapeFlag: getShapeFlags(type), //获取该vnode的标志
   };
   if (typeof children === "string") {

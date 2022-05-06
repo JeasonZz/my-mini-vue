@@ -19,6 +19,7 @@ export function createComponentInstance(vnode, parentComponent) {
     type: vnode.type,
     setupState: {},
     props: {},
+    next: null, //存放更新时新产生的虚拟节点树
     emit: () => {}, //emit
     slots: [], //插槽
     provides: parentComponent ? parentComponent.provides : {}, //初始化provides

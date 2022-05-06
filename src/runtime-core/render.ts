@@ -311,12 +311,32 @@ export function createRenderer(options) {
   }
   //挂载组件
   function processComponent(n1, n2, container, parentComponent, anchor) {
-    mountComponent(n2, container, parentComponent, anchor);
+    if (!n1) {
+      mountComponent(n2, container, parentComponent, anchor);
+    } else {
+      //触发组件更新操作
+      updateComponent(n1, n2);
+    }
+  }
+
+  function updateComponent(n1, n2) {
+    //直接把旧虚拟节点上的组件实例赋值给新虚拟节点
+    const instance = (n2.component = n1.component);
+    if (shouldUpdateComponent(n1, n2)) {
+      instance.next = n2;
+      instance.update();
+    } else {
+      n2.el = n1.el;
+      instance.vnode = n2;
+    }
   }
 
   function mountComponent(initialVNode, container, parentComponent, anchor) {
-    //创建组件实例
-    const instance = createComponentInstance(initialVNode, parentComponent);
+    //创建组件实例 并把组件实例放到该组件的虚拟节点上
+    const instance = (initialVNode.component = createComponentInstance(
+      initialVNode,
+      parentComponent
+    ));
     // 对组件的实例进行component处理
     setupComponent(instance);
     setupRenderEffect(instance, initialVNode, container, anchor);
@@ -325,7 +345,7 @@ export function createRenderer(options) {
   function setupRenderEffect(instance, initialVNode, container, anchor) {
     //这里是以组件为单位去添加effect，每个组件都对应一个effect，用以实现最小更新，所以上层组件中监听数据的改变，
     //会导致子组件重新渲染？
-    effect(() => {
+    instance.update = effect(() => {
       if (!instance.isMounted) {
         console.log("init");
         //这里先把组件render返回的vnode树存到instance对象中，用于后面对比
