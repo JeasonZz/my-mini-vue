@@ -12,7 +12,7 @@ import { createComponentInstance, setupComponent } from "./component";
 import { Fragment, Text } from "./vnode";
 import { createAppAPI } from "./createApp";
 import { effect } from "../reactivity/effect";
-import { WatchFileKind } from "typescript";
+import { shouldUpdateComponent } from "./componentUpdateUtils";
 //实现定制化渲染引擎
 export function createRenderer(options) {
   //引入渲染引擎机制
@@ -323,9 +323,12 @@ export function createRenderer(options) {
     //直接把旧虚拟节点上的组件实例赋值给新虚拟节点
     const instance = (n2.component = n1.component);
     if (shouldUpdateComponent(n1, n2)) {
+      //如果组件需要更新，就把新虚拟节点挂载到组件实例上，方便后续操作（判断逻辑是组件实例上的props变化了）
       instance.next = n2;
       instance.update();
     } else {
+      //如果组件不需要更新，这是用组件实例上的属性是否变化得出的 把旧的el挂载到新组件VNode上
+      //虚拟节点里面只有两个属性需要在挂载过程中拿到 1.component 2.el
       n2.el = n1.el;
       instance.vnode = n2;
     }
@@ -358,7 +361,11 @@ export function createRenderer(options) {
         instance.isMounted = true;
       } else {
         console.log("update");
-        const { proxy } = instance;
+        const { proxy, next, vnode } = instance;
+        if (next) {
+          next.el = vnode.el;
+          updateComponentPreRender(instance, next);
+        }
         const subTree = instance.render.call(proxy);
         //先取后存instance.subTree
         const prevSubTree = instance.subTree;
@@ -371,6 +378,12 @@ export function createRenderer(options) {
   return {
     createApp: createAppAPI(render),
   };
+}
+//处理组件更新
+function updateComponentPreRender(instance, nextVNode) {
+  instance.vnode = nextVNode;
+  instance.next = null;
+  instance.props = nextVNode.props;
 }
 //获取最长递增子序列
 function getSequence(arr) {
