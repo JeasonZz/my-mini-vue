@@ -13,6 +13,7 @@ import { Fragment, Text } from "./vnode";
 import { createAppAPI } from "./createApp";
 import { effect } from "../reactivity/effect";
 import { shouldUpdateComponent } from "./componentUpdateUtils";
+import { queueJobs } from "./scheduler";
 //实现定制化渲染引擎
 export function createRenderer(options) {
   //引入渲染引擎机制
@@ -348,38 +349,45 @@ export function createRenderer(options) {
   function setupRenderEffect(instance, initialVNode, container, anchor) {
     //这里是以组件为单位去添加effect，每个组件都对应一个effect，用以实现最小更新，所以上层组件中监听数据的改变，
     //会导致子组件重新渲染？
-    instance.update = effect(() => {
-      if (!instance.isMounted) {
-        console.log("init");
-        //这里先把组件render返回的vnode树存到instance对象中，用于后面对比
-        const { proxy } = instance;
-        //render函数中有this.  ref会对其进行依赖收集，this.改变则触发effect。
-        const subTree = (instance.subTree = instance.render.call(proxy));
-        patch(null, subTree, container, instance, anchor);
-        //组件vnode对象上添加el属性，取该组件最上层元素 （组件的最上层el就是subtree的最上层el）
-        initialVNode.el = subTree.el;
-        instance.isMounted = true;
-      } else {
-        console.log("update");
-        const { proxy, next, vnode } = instance;
-        if (next) {
-          next.el = vnode.el;
-          updateComponentPreRender(instance, next);
+    instance.update = effect(
+      () => {
+        if (!instance.isMounted) {
+          console.log("init");
+          //这里先把组件render返回的vnode树存到instance对象中，用于后面对比
+          const { proxy } = instance;
+          //render函数中有this.  ref会对其进行依赖收集，this.改变则触发effect。
+          const subTree = (instance.subTree = instance.render.call(proxy));
+          patch(null, subTree, container, instance, anchor);
+          //组件vnode对象上添加el属性，取该组件最上层元素 （组件的最上层el就是subtree的最上层el）
+          initialVNode.el = subTree.el;
+          instance.isMounted = true;
+        } else {
+          console.log("update");
+          const { proxy, next, vnode } = instance;
+          if (next) {
+            next.el = vnode.el;
+            updateComponentPreRender(instance, next);
+          }
+          const subTree = instance.render.call(proxy);
+          //先取后存instance.subTree
+          const prevSubTree = instance.subTree;
+          instance.subTree = subTree;
+          patch(prevSubTree, subTree, container, instance, anchor);
         }
-        const subTree = instance.render.call(proxy);
-        //先取后存instance.subTree
-        const prevSubTree = instance.subTree;
-        instance.subTree = subTree;
-        patch(prevSubTree, subTree, container, instance, anchor);
+      },
+      {
+        schedule() {
+          queueJobs(instance.update);
+        },
       }
-    });
+    );
   }
 
   return {
     createApp: createAppAPI(render),
   };
 }
-//处理组件更新
+//处理组件更新，只是props改变了，所以替换成组件上最新的的props，最后在.call指向proxy时会调用新的props
 function updateComponentPreRender(instance, nextVNode) {
   instance.vnode = nextVNode;
   instance.next = null;
